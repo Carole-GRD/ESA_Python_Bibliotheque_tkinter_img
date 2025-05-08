@@ -105,142 +105,192 @@ def emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, 
     :param fichier_emprunt: Chaîne représentant le chemin du fichier des emprunts
     :return: Aucun
     """
-    form_window = custom_form_window(root, "Emprunter un livre", "900x500")
-
+    form_window = custom_form_window(root, "Emprunter un livre", "900x650")
     custom_font = tkfont.Font(family="Helvetica", size=16)
+
+    # Variables globales au scope de la fonction
+    photo_path = tk.StringVar()
+    photo_image = None  # Référence nécessaire pour éviter la collecte par le garbage collector
 
     # Champs Nom
     (ttk.Label(form_window, text="Nom : ", font=custom_font, width=15, anchor="e")
         .grid(row=0, column=0, padx=5, pady=5, sticky="e"))
     nom_entry = ttk.Entry(form_window, font=custom_font)
-    nom_entry.grid(row=0, column=1, padx=5, pady=5)
+    nom_entry.grid(row=0, column=1, padx=10, pady=10)
 
     # Champs Prénom
     (ttk.Label(form_window, text="Prénom : ", font=custom_font, width=15, anchor="e")
         .grid(row=1, column=0, padx=5, pady=5, sticky="e"))
     prenom_entry = ttk.Entry(form_window, font=custom_font)
-    prenom_entry.grid(row=1, column=1, padx=5, pady=5)
+    prenom_entry.grid(row=1, column=1, padx=10, pady=10)
 
-    # Sélection de la photo
-    (ttk.Label(form_window, text="Photo : ", font=custom_font, width=15, anchor="e")
-        .grid(row=2, column=0, padx=5, pady=5, sticky="e"))
-    photo_label = ttk.Label(form_window, text="Aucune image sélectionnée", font=custom_font)
-    photo_label.grid(row=2, column=1, padx=5, pady=5, sticky="w")
-    photo_path = tk.StringVar()
-    photo_image = None  # Référence nécessaire pour éviter la collecte par le garbage collector
-
-    def select_photo():
-        """Ouvre une boîte de dialogue pour sélectionner une photo et affiche un aperçu."""
-        nonlocal photo_image
-        chemin = filedialog.askopenfilename(filetypes=[("Images", "*.jpg *.jpeg *.png")])
-        if chemin:
-            photo_path.set(chemin)
-            photo_label.config(text=os.path.basename(chemin))
-            # Afficher un aperçu
-            img = Image.open(chemin)
-            img = img.resize((100, 100), Image.Resampling.LANCZOS)
-            photo_image = ImageTk.PhotoImage(img)
-            preview_label.config(image=photo_image)
-            preview_label.image = photo_image  # Conserver la référence
-
-    (ttk.Button(form_window, text="Choisir une photo", command=select_photo, style="Custom.TButton")
-        .grid(row=2, column=2, padx=5, pady=5))
-
-    # Aperçu de la photo
-    preview_label = ttk.Label(form_window)
-    preview_label.grid(row=3, column=1, padx=5, pady=5)
-
-    # Titres des livres
-    (ttk.Label(form_window, text="Titres des livres : ", font=custom_font, width=15, anchor="e")
-        .grid(row=3, column=0, padx=5, pady=5, sticky="e"))
-    livres_text = tk.Text(form_window, height=4, width=30, font=custom_font)
-    livres_text.grid(row=3, column=1, padx=5, pady=5)
-
-    def submit():
-        """Valide les informations saisies pour emprunter un livre et met à jour les données."""
+    def check_person():
+        """Vérifie si la personne existe et affiche les champs correspondants."""
         nom = nom_entry.get().strip()
         prenom = prenom_entry.get().strip()
-        livres_input = livres_text.get("1.0", tk.END).strip().splitlines()
-        livres_a_emprunter = [title.strip() for title in livres_input if title.strip()]
 
         if not (nom and prenom):
             custom_messagebox(form_window, "Erreur", "Le nom et le prénom sont obligatoires !")
             return
 
-        if not livres_a_emprunter:
-            custom_messagebox(form_window, "Erreur", "Aucun livre sélectionné !")
-            return
-
         personne = trouver_ou_creer_personne(personnes, nom, prenom)
+        est_une_nouvelle_personne = len(personne['emprunts']) == 0 and not personne["photo_id"]
 
-        # Gérer la photo
-        chemin_image = photo_path.get()
-        if chemin_image and not personne["photo_id"]:  # Ajouter la photo si elle n'existe pas encore
-            personne["photo_id"] = copier_photo_emprunteur(nom, prenom, chemin_image)
+        # Supprimer les champs nom et prénom pour faire place aux nouveaux champs
+        for widget in form_window.winfo_children():
+            widget.destroy()
 
-        emprunts_en_cours = [e for e in personne['emprunts'].values() if not e['date_retour']]
+        preview_label = ttk.Label(form_window)
 
-        nbr_emprunts_actuels = sum(1 for e in personne['emprunts'].values() if not e['date_retour'])
-        if nbr_emprunts_actuels + len(livres_a_emprunter) >= 3:
-            message = (f"Impossible d'emprunter {len(livres_a_emprunter)} livre(s). Limite de 3 livres atteinte "
-                       f"(actuellement {nbr_emprunts_actuels} livres empruntés) !\n\n")
-            if nbr_emprunts_actuels == 3:
-                for e in emprunts_en_cours:
-                    dt_date_emprunt = datetime.strptime(e['date_emprunt'], "%Y-%m-%d")
-                    message = message + f"📖 {e['titre']} emprunté le {dt_date_emprunt.strftime('%d-%m-%Y')}\n"
-            custom_messagebox(form_window, "Erreur", message, geometry="550x400",
-                              parent_to_destroy=form_window if len(emprunts_en_cours) == 3 else None)
-            return
+        def select_photo():
+            """Ouvre une boîte de dialogue pour sélectionner une photo et affiche un aperçu."""
+            nonlocal photo_image
+            chemin = filedialog.askopenfilename(filetypes=[("Images", "*.jpg *.jpeg *.png")])
+            if chemin:
+                photo_path.set(chemin)
+                photo_label.config(text=os.path.basename(chemin))
+                img = Image.open(chemin)
+                img = img.resize((150, 150), Image.Resampling.LANCZOS)
+                photo_image = ImageTk.PhotoImage(img)
+                preview_label.config(image=photo_image)
+                preview_label.image = photo_image  # Conserver la référence
+                form_window.update()  # Forcer le rafraîchissement de l'interface
 
-        nouveaux_emprunts = []
-        for title in livres_a_emprunter:
-            livre_trouve = livres.get(title, None)
-            if not livre_trouve:
-                custom_messagebox(form_window, "Erreur", f"Livre '{title}' non trouvé !")
-                return
-            elif livre_trouve['Exemplaires'] == 0:
-                custom_messagebox(form_window, "Erreur", f"Pas de copies disponibles pour '{title}' !")
-                return
+        if est_une_nouvelle_personne:
+            # Cas : Nouvelle personne
+            (ttk.Label(form_window, text="Nouvelle personne", font=custom_font, foreground="blue")
+                .grid(row=0, column=0, columnspan=2, pady=15))
+
+            # Sélection de la photo
+            (ttk.Label(form_window, text="Photo : ", font=custom_font, width=15, anchor="e")
+                .grid(row=1, column=0, padx=15, pady=10, sticky="e"))
+            photo_label = ttk.Label(form_window, text="Aucune image sélectionnée", font=custom_font)
+            photo_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+            (ttk.Button(form_window, text="Choisir une photo", command=select_photo, style="Custom.TButton")
+                .grid(row=1, column=2, padx=10, pady=5))
+            preview_label.grid(row=2, column=1, padx=10, pady=10)
+
+            # Champ pour les livres
+            (ttk.Label(form_window, text="Titres des livres : ", font=custom_font, width=15, anchor="e")
+             .grid(row=3, column=0, padx=15, pady=20, sticky="e"))
+            livres_text = tk.Text(form_window, height=4, width=30, font=custom_font)
+            livres_text.grid(row=4, column=0, padx=15, pady=20, columnspan=2)
+        else:
+            # Cas : Personne existante
+            custom_title = tkfont.Font(family="Georgia", size=24)
+            (ttk.Label(form_window, text=f"{prenom} {nom}", font=custom_title)
+                .grid(row=0, column=0, columnspan=2, padx=30, pady=20))
+
+            photo_label = ttk.Label(form_window)
+            photo_label.grid(row=1, column=0, columnspan=2, padx=15, pady=10)
+            if personne["photo_id"]:
+                # Afficher la photo s'il y en a une déjà enregistrée
+                existing_photo_path = os.path.join("data/photos", personne["photo_id"])
+                if os.path.exists(existing_photo_path):
+                    img = Image.open(existing_photo_path)
+                    img = img.resize((150, 150), Image.Resampling.LANCZOS)
+                    photo_image = ImageTk.PhotoImage(img)
+                    photo_label.config(image=photo_image)
+                    photo_label.image = photo_image  # Garder la référence
+                else:
+                    photo_label.config(text="Photo non trouvée")
             else:
-                emprunt_id = str(max([int(k) for k in personne['emprunts'].keys()] + [0]) + 1)
-                personne['emprunts'][emprunt_id] = {
-                    "titre": title,
-                    "date_emprunt": date.today().strftime("%Y-%m-%d"),
-                    "date_retour": ""
-                }
-                livre_trouve['Exemplaires'] -= 1
-                nouveaux_emprunts.append(title)
+                # Option pour ajouter une photo si elle n'existe pas
+                (ttk.Label(form_window, text="Photo : ", font=custom_font, width=15, anchor="e")
+                 .grid(row=1, column=0, padx=15, pady=10, sticky="e"))
+                photo_label = ttk.Label(form_window, text="Aucune image sélectionnée", font=custom_font)
+                photo_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+                (ttk.Button(form_window, text="Choisir une photo", command=select_photo, style="Custom.TButton")
+                    .grid(row=1, column=2, padx=10, pady=5))
+                preview_label.grid(row=2, column=1, padx=10, pady=5)
 
-        # Recalculer le nombre de livres empruntés (en cours) après les éventuels ajouts
-        personne['nbr_livres_empruntes'] = sum(1 for e in personne['emprunts'].values() if not e['date_retour'])
+            # Champ pour les livres à emprunter  (uniquement une fois)
+            (ttk.Label(form_window, text="Titres des livres : ", font=custom_font, width=15, anchor="e")
+             .grid(row=3, column=0, padx=10, pady=20, sticky="e"))
+            livres_text = tk.Text(form_window, height=4, width=30, font=custom_font)
+            livres_text.grid(row=4, column=0, padx=15, pady=0)
 
-        if nouveaux_emprunts:  # Fermer form_window uniquement si des livres ont été empruntés
-            sauvegarder_emprunts(personnes, fichier_emprunt)
-            sauvegarder_bibliotheque(livres, fichier_bibliotheque)
+        def submit():
+            """Valide les informations saisies pour emprunter un livre et met à jour les données."""
+            livres_input = livres_text.get("1.0", tk.END).strip().splitlines()
+            livres_a_emprunter = [title.strip() for title in livres_input if title.strip()]
 
-            date_retour_theorique = date.today() + timedelta(days=14)
+            if not livres_a_emprunter:
+                custom_messagebox(form_window, "Erreur", "Aucun livre sélectionné !")
+                return
 
-            clear_result(result_text)
-            if not emprunts_en_cours:
-                result_text.insert(tk.END, f"Aucun emprunt en cours pour {prenom} {nom} !\n")
-            else:
-                result_text.insert(tk.END, f"Livre(s) emprunté(s) par {prenom} {nom} :\n")
-                for e in emprunts_en_cours:
-                    dt_date_emprunt = datetime.strptime(e['date_emprunt'], "%Y-%m-%d")
-                    result_text.insert(tk.END, f"📖 {e['titre']} emprunté le {dt_date_emprunt.strftime('%d-%m-%Y')}\n")
-            result_text.insert(tk.END, f"- - -\n")
-            if len(nouveaux_emprunts) > 0:
-                result_text.insert(tk.END, f"{len(nouveaux_emprunts)} livre(s) emprunté(s) aujourd'hui :\n")
-                for title in nouveaux_emprunts:
-                    result_text.insert(tk.END, f"📗 {title}\n")
-                result_text.insert(tk.END, f"👉 Retour avant le {date_retour_theorique.strftime('%d-%m-%Y')} "
-                                           f"(14 jours)\n")
-            form_window.destroy()
+            # Gérer la photo
+            chemin_image = photo_path.get()
+            if chemin_image and not personne["photo_id"]:
+                personne["photo_id"] = copier_photo_emprunteur(nom, prenom, chemin_image)
 
-    (ttk.Button(form_window, text="Confirmer", command=submit, style="Custom.TButton")
-        .grid(row=4, column=0, columnspan=2, pady=10))
+            emprunts_en_cours = [e for e in personne['emprunts'].values() if not e['date_retour']]
+
+            nbr_emprunts_actuels = sum(1 for e in personne['emprunts'].values() if not e['date_retour'])
+            if nbr_emprunts_actuels + len(livres_a_emprunter) > 3:
+                message = (f"Impossible d'emprunter {len(livres_a_emprunter)} livre(s). Limite de 3 livres atteinte "
+                           f"(actuellement {nbr_emprunts_actuels} livres empruntés) !\n\n")
+                if nbr_emprunts_actuels == 3:
+                    for e in emprunts_en_cours:
+                        dt_date_emprunt = datetime.strptime(e['date_emprunt'], "%Y-%m-%d")
+                        message = message + f"📖 {e['titre']} emprunté le {dt_date_emprunt.strftime('%d-%m-%Y')}\n"
+                custom_messagebox(form_window, "Erreur", message, geometry="550x400",
+                                  parent_to_destroy=form_window if len(emprunts_en_cours) == 3 else None)
+                return
+
+            nouveaux_emprunts = []
+            for title in livres_a_emprunter:
+                livre_trouve = livres.get(title, None)
+                if not livre_trouve:
+                    custom_messagebox(form_window, "Erreur", f"Livre '{title}' non trouvé !")
+                    return
+                elif livre_trouve['Exemplaires'] == 0:
+                    custom_messagebox(form_window, "Erreur", f"Pas de copies disponibles pour '{title}' !")
+                    return
+                else:
+                    emprunt_id = str(max([int(k) for k in personne['emprunts'].keys()] + [0]) + 1)
+                    personne['emprunts'][emprunt_id] = {
+                        "titre": title,
+                        "date_emprunt": date.today().strftime("%Y-%m-%d"),
+                        "date_retour": ""
+                    }
+                    livre_trouve['Exemplaires'] -= 1
+                    nouveaux_emprunts.append(title)
+
+            personne['nbr_livres_empruntes'] = sum(1 for e in personne['emprunts'].values() if not e['date_retour'])
+
+            if nouveaux_emprunts:
+                sauvegarder_emprunts(personnes, fichier_emprunt)
+                sauvegarder_bibliotheque(livres, fichier_bibliotheque)
+
+                date_retour_theorique = date.today() + timedelta(days=14)
+
+                clear_result(result_text)
+                if not emprunts_en_cours:
+                    result_text.insert(tk.END, f"Aucun emprunt en cours pour {prenom} {nom} !\n")
+                else:
+                    result_text.insert(tk.END, f"Livre(s) emprunté(s) par {prenom} {nom} :\n")
+                    for e in emprunts_en_cours:
+                        dt_date_emprunt = datetime.strptime(e['date_emprunt'], "%Y-%m-%d")
+                        result_text.insert(tk.END, f"📖 {e['titre']} emprunté le {dt_date_emprunt.strftime('%d-%m-%Y')}\n")
+                result_text.insert(tk.END, f"- - -\n")
+                if len(nouveaux_emprunts) > 0:
+                    result_text.insert(tk.END, f"{len(nouveaux_emprunts)} livre(s) emprunté(s) aujourd'hui :\n")
+                    for title in nouveaux_emprunts:
+                        result_text.insert(tk.END, f"📗 {title}\n")
+                    result_text.insert(tk.END, f"👉 Retour avant le {date_retour_theorique.strftime('%d-%m-%Y')} (14 jours)\n")
+                form_window.destroy()
+
+        # row_numero = 4 if est_une_nouvelle_personne else 5
+        (ttk.Button(form_window, text="Confirmer", command=submit, style="Custom.TButton")
+            .grid(row=5, column=0, columnspan=2, pady=10))
+        (ttk.Button(form_window, text="Annuler", command=form_window.destroy, style="Custom.TButton")
+            .grid(row=6, column=0, columnspan=2))
+
+    (ttk.Button(form_window, text="Continuer", command=check_person, style="Custom.TButton")
+        .grid(row=2, column=0, columnspan=2, pady=10))
     (ttk.Button(form_window, text="Annuler", command=form_window.destroy, style="Custom.TButton")
-        .grid(row=5, column=0, columnspan=2))
+        .grid(row=3, column=0, columnspan=2))
 
 
 def rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fichier_emprunt):
@@ -253,20 +303,21 @@ def rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fic
     :param fichier_emprunt: Chaîne représentant le chemin du fichier des emprunts
     :return: Aucun
     """
-    form_window = custom_form_window(root, "Rendre un livre", "400x200")
-
+    form_window = custom_form_window(root, "Rendre un livre", "600x750")
     custom_font = tkfont.Font(family="Helvetica", size=14)
 
+    # Champs Nom
     ttk.Label(form_window, text="Nom :", font=custom_font, width=12, anchor="e").grid(row=0, column=0, padx=5, pady=5)
     nom_entry = ttk.Entry(form_window, font=custom_font)
     nom_entry.grid(row=0, column=1, padx=5, pady=5)
 
+    # Champs Prénom
     ttk.Label(form_window, text="Prénom :", font=custom_font, width=12, anchor="e").grid(row=1, column=0, padx=5, pady=5)
     prenom_entry = ttk.Entry(form_window, font=custom_font)
     prenom_entry.grid(row=1, column=1, padx=5, pady=5)
 
     def submit():
-        """Valide les informations saisies pour rendre un livre et ouvre la fenêtre de sélection des emprunts."""
+        """Valide les informations saisies pour rendre un livre et affiche les emprunts dans la même fenêtre."""
         nom = nom_entry.get().strip()
         prenom = prenom_entry.get().strip()
 
@@ -296,24 +347,27 @@ def rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fic
                               geometry="450x350", personne=personne, parent_to_destroy=form_window)
             return
 
-        select_window = custom_form_window(form_window, "Emprunts en cours", "600x700")
+        # Supprimer les widgets existants
+        for widget in form_window.winfo_children():
+            widget.destroy()
 
-        # Étiquette Prénom Nom
+        # Afficher les informations dans la même fenêtre
         custom_title = tkfont.Font(family="Georgia", size=24)
-        (ttk.Label(select_window, text=f"{prenom} {nom}", font=custom_title)
+        (ttk.Label(form_window, text=f"{prenom} {nom}", font=custom_title)
             .grid(row=0, column=0, columnspan=2, padx=30, pady=20))
 
-        afficher_photo(select_window, personne["photo_id"])
+        photo_label = ttk.Label(form_window)
+        photo_label.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+        afficher_photo(form_window, personne["photo_id"])
 
-        # Étiquette pour sélectionner les livres
         custom_label = tkfont.Font(family="Comic Sans MS", size=16)
-        (ttk.Label(select_window, text=f"Sélectionner les livres rapportés :", font=custom_label)
+        (ttk.Label(form_window, text=f"Sélectionner les livres rapportés :", font=custom_label)
             .grid(row=2, column=0, columnspan=2, padx=50, pady=20))
 
         selected_books = []
         for i, retour in enumerate(retours, 1):
             var = tk.BooleanVar()
-            (ttk.Checkbutton(select_window, text=f"{retour['titre']} (Emprunté le : {retour['date_emprunt']})",
+            (ttk.Checkbutton(form_window, text=f"{retour['titre']} (Emprunté le : {retour['date_emprunt']})",
                              variable=var, style="Custom.TCheckbutton")
                 .grid(row=i+2, column=0, columnspan=2, sticky="ew", padx=50, pady=10))
             selected_books.append((var, retour))
@@ -345,7 +399,7 @@ def rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fic
                         returned_books.append(f"{emprunt['titre']} : Rendu à temps")
 
             if not returned_books:
-                custom_messagebox(select_window, "Info", "Aucun livre sélectionné pour le retour !")
+                custom_messagebox(form_window, "Info", "Aucun livre sélectionné pour le retour !")
                 return
 
             personne['nbr_livres_empruntes'] = sum(1 for e in personne['emprunts'].values() if not e['date_retour'])
@@ -360,12 +414,11 @@ def rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fic
                 result_text.insert(tk.END, "- - -\n")
                 result_text.insert(tk.END, f"Pénalité totale : {montant_total:.2f}€\n")
 
-            select_window.destroy()
             form_window.destroy()
 
-        (ttk.Button(select_window, text="Confirmer", command=confirm_return, style="Custom.TButton")
+        (ttk.Button(form_window, text="Confirmer", command=confirm_return, style="Custom.TButton")
             .grid(row=len(retours) + 4, column=0, columnspan=2, pady=25))
-        (ttk.Button(select_window, text="Annuler", command=select_window.destroy, style="Custom.TButton")
+        (ttk.Button(form_window, text="Annuler", command=form_window.destroy, style="Custom.TButton")
             .grid(row=len(retours) + 5, column=0, columnspan=2))
 
     (ttk.Button(form_window, text="Continuer", command=submit, style="Custom.TButton")

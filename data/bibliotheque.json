@@ -9,13 +9,13 @@
         "Auteur": "Antoine de Saint-Exupéry",
         "Année": "1943",
         "Genre": "Conte philosophique",
-        "Exemplaires": 11
+        "Exemplaires": 10
     },
     "Moby Dick": {
         "Auteur": "Herman Melville",
         "Année": "1851",
         "Genre": "Aventure",
-        "Exemplaires": 13
+        "Exemplaires": 12
     },
     "Pride and Prejudice": {
         "Auteur": "Jane Austen",
@@ -226,11 +226,5 @@
         "Année": "1899",
         "Genre": "Psychologique",
         "Exemplaires": 6
-    },
-    "Test": {
-        "Auteur": "Moi",
-        "Année": 1999,
-        "Genre": "BD",
-        "Exemplaires": 5
     }
 }
