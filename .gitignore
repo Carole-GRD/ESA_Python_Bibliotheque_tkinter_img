@@ -1,0 +1,19 @@
+# Environnement virtuel
+.venv/
+env/
+
+# PyCharm / JetBrains
+.idea/
+
+# Caches et fichiers Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Fichiers de config / logs perso
+*.log
+*.env
+
+# Fichiers système inutiles
+.DS_Store
+Thumbs.db

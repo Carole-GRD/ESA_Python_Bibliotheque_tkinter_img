@@ -1,0 +1,236 @@
+{
+    "1984": {
+        "Auteur": "George Orwell",
+        "Année": "1949",
+        "Genre": "Dystopie",
+        "Exemplaires": 6
+    },
+    "Le Petit Prince": {
+        "Auteur": "Antoine de Saint-Exupéry",
+        "Année": "1943",
+        "Genre": "Conte philosophique",
+        "Exemplaires": 11
+    },
+    "Moby Dick": {
+        "Auteur": "Herman Melville",
+        "Année": "1851",
+        "Genre": "Aventure",
+        "Exemplaires": 13
+    },
+    "Pride and Prejudice": {
+        "Auteur": "Jane Austen",
+        "Année": "1813",
+        "Genre": "Romance",
+        "Exemplaires": 0
+    },
+    "To Kill a Mockingbird": {
+        "Auteur": "Harper Lee",
+        "Année": "1960",
+        "Genre": "Drame",
+        "Exemplaires": 6
+    },
+    "Les Misérables": {
+        "Auteur": "Victor Hugo",
+        "Année": "1862",
+        "Genre": "Historique",
+        "Exemplaires": 8
+    },
+    "War and Peace": {
+        "Auteur": "Léon Tolstoï",
+        "Année": "1869",
+        "Genre": "Historique",
+        "Exemplaires": 4
+    },
+    "The Great Gatsby": {
+        "Auteur": "F. Scott Fitzgerald",
+        "Année": "1925",
+        "Genre": "Drame",
+        "Exemplaires": 3
+    },
+    "Crime and Punishment": {
+        "Auteur": "Fiodor Dostoïevski",
+        "Année": "1866",
+        "Genre": "Psychologique",
+        "Exemplaires": 1
+    },
+    "The Catcher in the Rye": {
+        "Auteur": "J.D. Salinger",
+        "Année": "1951",
+        "Genre": "Roman d'apprentissage",
+        "Exemplaires": 0
+    },
+    "The Hobbit": {
+        "Auteur": "J.R.R. Tolkien",
+        "Année": "1937",
+        "Genre": "Fantasy",
+        "Exemplaires": 7
+    },
+    "Fahrenheit 451": {
+        "Auteur": "Ray Bradbury",
+        "Année": "1953",
+        "Genre": "Science-fiction",
+        "Exemplaires": 6
+    },
+    "Jane Eyre": {
+        "Auteur": "Charlotte Brontë",
+        "Année": "1847",
+        "Genre": "Romance",
+        "Exemplaires": 0
+    },
+    "Wuthering Heights": {
+        "Auteur": "Emily Brontë",
+        "Année": "1847",
+        "Genre": "Drame",
+        "Exemplaires": 1
+    },
+    "The Divine Comedy": {
+        "Auteur": "Dante Alighieri",
+        "Année": "1320",
+        "Genre": "Poésie",
+        "Exemplaires": 4
+    },
+    "The Brothers Karamazov": {
+        "Auteur": "Fiodor Dostoïevski",
+        "Année": "1880",
+        "Genre": "Philosophique",
+        "Exemplaires": 9
+    },
+    "Madame Bovary": {
+        "Auteur": "Gustave Flaubert",
+        "Année": "1857",
+        "Genre": "Drame",
+        "Exemplaires": 10
+    },
+    "The Adventures of Huckleberry Finn": {
+        "Auteur": "Mark Twain",
+        "Année": "1884",
+        "Genre": "Aventure",
+        "Exemplaires": 1
+    },
+    "Anna Karenina": {
+        "Auteur": "Léon Tolstoï",
+        "Année": "1877",
+        "Genre": "Romance",
+        "Exemplaires": 0
+    },
+    "The Iliad": {
+        "Auteur": "Homère",
+        "Année": "8ème siècle av. J.-C.",
+        "Genre": "Épopée",
+        "Exemplaires": 3
+    },
+    "The Picture of Dorian Gray": {
+        "Auteur": "Oscar Wilde",
+        "Année": "1890",
+        "Genre": "Philosophique",
+        "Exemplaires": 2
+    },
+    "Dracula": {
+        "Auteur": "Bram Stoker",
+        "Année": "1897",
+        "Genre": "Horreur",
+        "Exemplaires": 6
+    },
+    "The Metamorphosis": {
+        "Auteur": "Franz Kafka",
+        "Année": "1915",
+        "Genre": "Fantastique",
+        "Exemplaires": 5
+    },
+    "The Old Man and the Sea": {
+        "Auteur": "Ernest Hemingway",
+        "Année": "1952",
+        "Genre": "Aventure",
+        "Exemplaires": 4
+    },
+    "The Odyssey": {
+        "Auteur": "Homère",
+        "Année": "8ème siècle av. J.-C.",
+        "Genre": "Épopée",
+        "Exemplaires": 3
+    },
+    "Great Expectations": {
+        "Auteur": "Charles Dickens",
+        "Année": "1861",
+        "Genre": "Roman d'apprentissage",
+        "Exemplaires": 2
+    },
+    "The Count of Monte Cristo": {
+        "Auteur": "Alexandre Dumas",
+        "Année": "1844",
+        "Genre": "Aventure",
+        "Exemplaires": 1
+    },
+    "Ulysses": {
+        "Auteur": "James Joyce",
+        "Année": "1922",
+        "Genre": "Moderniste",
+        "Exemplaires": 0
+    },
+    "The Grapes of Wrath": {
+        "Auteur": "John Steinbeck",
+        "Année": "1939",
+        "Genre": "Drame",
+        "Exemplaires": 7
+    },
+    "The Trial": {
+        "Auteur": "Franz Kafka",
+        "Année": "1925",
+        "Genre": "Fantastique",
+        "Exemplaires": 8
+    },
+    "The Scarlet Letter": {
+        "Auteur": "Nathaniel Hawthorne",
+        "Année": "1850",
+        "Genre": "Drame",
+        "Exemplaires": 9
+    },
+    "The Secret Garden": {
+        "Auteur": "Frances Hodgson Burnett",
+        "Année": "1911",
+        "Genre": "Enfant",
+        "Exemplaires": 1
+    },
+    "A Tale of Two Cities": {
+        "Auteur": "Charles Dickens",
+        "Année": "1859",
+        "Genre": "Historique",
+        "Exemplaires": 3
+    },
+    "Frankenstein": {
+        "Auteur": "Mary Shelley",
+        "Année": "1818",
+        "Genre": "Science-fiction",
+        "Exemplaires": 1
+    },
+    "The Stranger": {
+        "Auteur": "Albert Camus",
+        "Année": "1942",
+        "Genre": "Philosophique",
+        "Exemplaires": 2
+    },
+    "The Hunchback of Notre-Dame": {
+        "Auteur": "Victor Hugo",
+        "Année": "1831",
+        "Genre": "Drame",
+        "Exemplaires": 4
+    },
+    "The Call of the Wild": {
+        "Auteur": "Jack London",
+        "Année": "1903",
+        "Genre": "Aventure",
+        "Exemplaires": 5
+    },
+    "Heart of Darkness": {
+        "Auteur": "Joseph Conrad",
+        "Année": "1899",
+        "Genre": "Psychologique",
+        "Exemplaires": 6
+    },
+    "Test": {
+        "Auteur": "Moi",
+        "Année": 1999,
+        "Genre": "BD",
+        "Exemplaires": 5
+    }
+}

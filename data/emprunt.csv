@@ -1,0 +1,22 @@
+nom;prenom;nbr_livres_empruntes;photo_id;emprunt_id;titre;date_emprunt;date_retour
+Dubois;Claire;2;dubois_claire_20250410_111359.jpg;1;1984;2025-04-10;
+;;;;2;Le Petit Prince;2025-04-15;2025-04-25
+;;;;3;Moby Dick;2025-05-01;
+Martin;Thomas;1;martin_thomas_20250405_111359.jpg;1;To Kill a Mockingbird;2025-04-05;2025-04-20
+;;;;2;Les Misérables;2025-04-22;
+Lefèvre;Sophie;3;lefevre_sophie_20250412_111359.jpg;1;War and Peace;2025-04-12;
+;;;;2;The Great Gatsby;2025-04-18;
+;;;;3;Fahrenheit 451;2025-04-30;
+Bernard;Luc;0;bernard_luc_20250401_111359.jpg;1;The Hobbit;2025-04-01;2025-04-15
+;;;;2;The Divine Comedy;2025-04-10;2025-04-22
+Girard;Emma;2;girard_emma_20250420_111359.jpg;1;Crime and Punishment;2025-04-20;
+;;;;2;Madame Bovary;2025-05-05;
+Roux;Antoine;1;roux_antoine_20250425_111359.jpg;1;The Brothers Karamazov;2025-04-25;2025-05-01
+;;;;2;The Old Man and the Sea;2025-05-02;
+Lemoine;Julie;2;lemoine_julie_20250410_111359.jpg;1;Dracula;2025-04-15;
+;;;;2;The Metamorphosis;2025-04-28;
+;;;;3;The Hunchback of Notre-Dame;2025-04-10;2025-04-24
+Moreau;Paul;0;moreau_paul_20250403_111359.jpg;1;Pride and Prejudice;2025-04-03;2025-04-17
+Vasseur;Marie;3;vasseur_marie_20250408_111359.jpg;1;The Grapes of Wrath;2025-04-08;
+;;;;2;The Trial;2025-04-14;
+;;;;3;The Scarlet Letter;2025-04-29;
