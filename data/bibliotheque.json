@@ -3,19 +3,19 @@
         "Auteur": "George Orwell",
         "Année": "1949",
         "Genre": "Dystopie",
-        "Exemplaires": 6
+        "Exemplaires": 7
     },
     "Le Petit Prince": {
         "Auteur": "Antoine de Saint-Exupéry",
         "Année": "1943",
         "Genre": "Conte philosophique",
-        "Exemplaires": 10
+        "Exemplaires": 16
     },
     "Moby Dick": {
         "Auteur": "Herman Melville",
         "Année": "1851",
         "Genre": "Aventure",
-        "Exemplaires": 12
+        "Exemplaires": 14
     },
     "Pride and Prejudice": {
         "Auteur": "Jane Austen",

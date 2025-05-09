@@ -63,11 +63,11 @@ def trouver_ou_creer_personne(personnes, nom, prenom):
     :return: Dictionnaire représentant la personne
     """
     for p in personnes:
-        if nom == p['nom'] and prenom == p['prenom']:
+        if nom.capitalize() == p['nom'] and prenom.capitalize() == p['prenom']:
             return p
     personne = {
-        "nom": nom,
-        "prenom": prenom,
+        "nom": nom.capitalize(),
+        "prenom": prenom.capitalize(),
         "nbr_livres_empruntes": 0,
         "emprunts": {},
         "photo_id": ""
@@ -105,7 +105,7 @@ def emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, 
     :param fichier_emprunt: Chaîne représentant le chemin du fichier des emprunts
     :return: Aucun
     """
-    form_window = custom_form_window(root, "Emprunter un livre", "900x650")
+    form_window = custom_form_window(root, "Emprunter un livre", "600x350")
     custom_font = tkfont.Font(family="Helvetica", size=16)
 
     # Variables globales au scope de la fonction
@@ -126,8 +126,8 @@ def emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, 
 
     def check_person():
         """Vérifie si la personne existe et affiche les champs correspondants."""
-        nom = nom_entry.get().strip()
-        prenom = prenom_entry.get().strip()
+        nom = nom_entry.get().strip().capitalize()
+        prenom = prenom_entry.get().strip().capitalize()
 
         if not (nom and prenom):
             custom_messagebox(form_window, "Erreur", "Le nom et le prénom sont obligatoires !")
@@ -158,33 +158,42 @@ def emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, 
 
         if est_une_nouvelle_personne:
             # Cas : Nouvelle personne
-            (ttk.Label(form_window, text="Nouvelle personne", font=custom_font, foreground="blue")
-                .grid(row=0, column=0, columnspan=2, pady=15))
+            form_window.geometry("650x800")
 
-            # Sélection de la photo
-            (ttk.Label(form_window, text="Photo : ", font=custom_font, width=15, anchor="e")
-                .grid(row=1, column=0, padx=15, pady=10, sticky="e"))
-            photo_label = ttk.Label(form_window, text="Aucune image sélectionnée", font=custom_font)
-            photo_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
-            (ttk.Button(form_window, text="Choisir une photo", command=select_photo, style="Custom.TButton")
-                .grid(row=1, column=2, padx=10, pady=5))
-            preview_label.grid(row=2, column=1, padx=10, pady=10)
+            custom_title = tkfont.Font(family="Georgia", size=24, weight="bold")
+            (ttk.Label(form_window, text=f"{prenom} {nom}", font=custom_title, background="#f0f0f0", foreground="darkblue")
+                .grid(row=0, column=0, padx=200, pady=20))
+
+            # Sélection de la photo (créer un Frame pour regrouper les éléments)
+            frame = ttk.Frame(form_window)
+            frame.grid(row=1, column=0, padx=25, pady=10)
+
+            # Placer les éléments dans le Frame avec pack pour un agencement vertical
+            ttk.Label(frame, text="Photo : ", font=custom_font, width=15, anchor="center").pack(pady=5)
+            ttk.Button(frame, text="Choisir une photo", command=select_photo, style="Custom.TButton").pack(pady=5)
+            photo_label = ttk.Label(frame, text="Aucune image sélectionnée", font=custom_font, width=30,
+                                    anchor="center")
+            photo_label.pack(pady=5)
+
+            # Afficher la photo
+            preview_label.grid(row=2, column=0, padx=5, pady=5)
 
             # Champ pour les livres
-            (ttk.Label(form_window, text="Titres des livres : ", font=custom_font, width=15, anchor="e")
-             .grid(row=3, column=0, padx=15, pady=20, sticky="e"))
+            (ttk.Label(form_window, text="Titres des livres : ", font=custom_font, width=20, foreground='')
+             .grid(row=3, column=0, padx=100, pady=20))
             livres_text = tk.Text(form_window, height=4, width=30, font=custom_font)
-            livres_text.grid(row=4, column=0, padx=15, pady=20, columnspan=2)
+            livres_text.grid(row=4, column=0, padx=100, pady=20)
         else:
             # Cas : Personne existante
-            custom_title = tkfont.Font(family="Georgia", size=24)
-            (ttk.Label(form_window, text=f"{prenom} {nom}", font=custom_title)
-                .grid(row=0, column=0, columnspan=2, padx=30, pady=20))
+            custom_title = tkfont.Font(family="Georgia", size=24, weight="bold")
+            (ttk.Label(form_window, text=f"{prenom} {nom}", font=custom_title, background="#f0f0f0", foreground="darkblue")
+                .grid(row=0, column=0, padx=200, pady=20))
 
-            photo_label = ttk.Label(form_window)
-            photo_label.grid(row=1, column=0, columnspan=2, padx=15, pady=10)
             if personne["photo_id"]:
                 # Afficher la photo s'il y en a une déjà enregistrée
+                form_window.geometry("650x650")
+                photo_label = ttk.Label(form_window, anchor="center")
+                photo_label.grid(row=1, column=0, padx=200, pady=20)
                 existing_photo_path = os.path.join("data/photos", personne["photo_id"])
                 if os.path.exists(existing_photo_path):
                     img = Image.open(existing_photo_path)
@@ -196,19 +205,28 @@ def emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, 
                     photo_label.config(text="Photo non trouvée")
             else:
                 # Option pour ajouter une photo si elle n'existe pas
-                (ttk.Label(form_window, text="Photo : ", font=custom_font, width=15, anchor="e")
-                 .grid(row=1, column=0, padx=15, pady=10, sticky="e"))
-                photo_label = ttk.Label(form_window, text="Aucune image sélectionnée", font=custom_font)
-                photo_label.grid(row=1, column=1, padx=10, pady=5, sticky="w")
-                (ttk.Button(form_window, text="Choisir une photo", command=select_photo, style="Custom.TButton")
-                    .grid(row=1, column=2, padx=10, pady=5))
-                preview_label.grid(row=2, column=1, padx=10, pady=5)
+                form_window.geometry("650x800")
 
-            # Champ pour les livres à emprunter  (uniquement une fois)
-            (ttk.Label(form_window, text="Titres des livres : ", font=custom_font, width=15, anchor="e")
-             .grid(row=3, column=0, padx=10, pady=20, sticky="e"))
+                # Créer un Frame pour regrouper les éléments
+                frame = ttk.Frame(form_window)
+                frame.grid(row=1, column=0, padx=25, pady=10)
+
+                # Placer les éléments dans le Frame avec pack pour un agencement vertical
+                ttk.Label(frame, text="Photo : ", font=custom_font, width=15, anchor="center").pack(pady=5)
+                ttk.Button(frame, text="Choisir une photo", command=select_photo, style="Custom.TButton").pack(pady=5)
+                photo_label = ttk.Label(frame, text="Aucune image sélectionnée", font=custom_font, width=30,
+                                        anchor="center")
+                photo_label.pack(pady=5)
+
+                # Afficher la photo
+                preview_label.grid(row=2, column=0, padx=5, pady=5)
+
+            # Champ pour les livres à emprunter (uniquement une fois)
+            (ttk.Label(form_window, text="Titres des livres à emprunter : ", width=30, font=('Verdana', 16),
+                       foreground="darkblue", background="#f0f0f0", anchor='center')
+             .grid(row=3, column=0, padx=100, pady=20))
             livres_text = tk.Text(form_window, height=4, width=30, font=custom_font)
-            livres_text.grid(row=4, column=0, padx=15, pady=0)
+            livres_text.grid(row=4, column=0, padx=100, pady=20)
 
         def submit():
             """Valide les informations saisies pour emprunter un livre et met à jour les données."""
@@ -283,9 +301,9 @@ def emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, 
 
         # row_numero = 4 if est_une_nouvelle_personne else 5
         (ttk.Button(form_window, text="Confirmer", command=submit, style="Custom.TButton")
-            .grid(row=5, column=0, columnspan=2, pady=10))
+            .grid(row=5, column=0, padx=200, pady=10))
         (ttk.Button(form_window, text="Annuler", command=form_window.destroy, style="Custom.TButton")
-            .grid(row=6, column=0, columnspan=2))
+            .grid(row=6, column=0, padx=200, pady=10))
 
     (ttk.Button(form_window, text="Continuer", command=check_person, style="Custom.TButton")
         .grid(row=2, column=0, columnspan=2, pady=10))
@@ -303,7 +321,7 @@ def rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fic
     :param fichier_emprunt: Chaîne représentant le chemin du fichier des emprunts
     :return: Aucun
     """
-    form_window = custom_form_window(root, "Rendre un livre", "600x750")
+    form_window = custom_form_window(root, "Rendre un livre", "600x350")
     custom_font = tkfont.Font(family="Helvetica", size=14)
 
     # Champs Nom
@@ -318,8 +336,8 @@ def rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fic
 
     def submit():
         """Valide les informations saisies pour rendre un livre et affiche les emprunts dans la même fenêtre."""
-        nom = nom_entry.get().strip()
-        prenom = prenom_entry.get().strip()
+        nom = nom_entry.get().strip().capitalize()
+        prenom = prenom_entry.get().strip().capitalize()
 
         if not (nom and prenom):
             custom_messagebox(root, "Erreur", "Tous les champs sont requis!")
@@ -351,17 +369,21 @@ def rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fic
         for widget in form_window.winfo_children():
             widget.destroy()
 
-        # Afficher les informations dans la même fenêtre
-        custom_title = tkfont.Font(family="Georgia", size=24)
-        (ttk.Label(form_window, text=f"{prenom} {nom}", font=custom_title)
+        if personne['photo_id']:
+            form_window.geometry("650x800")
+        else:
+            form_window.geometry("650x650")
+
+        custom_title = tkfont.Font(family="Georgia", size=24, weight="bold")
+        (ttk.Label(form_window, text=f"{prenom} {nom}", font=custom_title, background="#f0f0f0", foreground="darkblue")
             .grid(row=0, column=0, columnspan=2, padx=30, pady=20))
 
         photo_label = ttk.Label(form_window)
         photo_label.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
         afficher_photo(form_window, personne["photo_id"])
 
-        custom_label = tkfont.Font(family="Comic Sans MS", size=16)
-        (ttk.Label(form_window, text=f"Sélectionner les livres rapportés :", font=custom_label)
+        (ttk.Label(form_window, text=f"Sélectionner les livres rapportés :", font=('Verdana', 16),
+                   foreground="darkblue", background="#f0f0f0")
             .grid(row=2, column=0, columnspan=2, padx=50, pady=20))
 
         selected_books = []
