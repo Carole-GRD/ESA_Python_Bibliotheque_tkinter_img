@@ -24,3 +24,14 @@ def custom_form_window(parent, title, geometry):
     form_window.geometry(f"+{x}+{y}")
 
     return form_window
+
+
+def resize_form_window(root, window_width, window_height):
+    # window_width = 750
+    # window_height = 750
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width - window_width) // 2
+    y = (screen_height - window_height) // 2
+    # form_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+    return f"{window_width}x{window_height}+{x}+{y}"

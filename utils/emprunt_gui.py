@@ -20,6 +20,7 @@ from PIL import Image, ImageTk
 
 from utils.custom_messagebox import custom_messagebox
 from utils.custom_form_window import custom_form_window
+from utils.custom_form_window import resize_form_window
 from utils.gestion_fichiers import sauvegarder_bibliotheque
 from utils.gestion_fichiers import sauvegarder_emprunts
 
@@ -158,7 +159,8 @@ def emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, 
 
         if est_une_nouvelle_personne:
             # Cas : Nouvelle personne
-            form_window.geometry("650x800")
+            nouvelles_dimensions = resize_form_window(root, 800, 800)
+            form_window.geometry(nouvelles_dimensions)
 
             custom_title = tkfont.Font(family="Georgia", size=24, weight="bold")
             (ttk.Label(form_window, text=f"{prenom} {nom}", font=custom_title, background="#f0f0f0", foreground="darkblue")
@@ -191,7 +193,8 @@ def emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, 
 
             if personne["photo_id"]:
                 # Afficher la photo s'il y en a une déjà enregistrée
-                form_window.geometry("650x650")
+                nouvelles_dimensions = resize_form_window(root, 650, 650)
+                form_window.geometry(nouvelles_dimensions)
                 photo_label = ttk.Label(form_window, anchor="center")
                 photo_label.grid(row=1, column=0, padx=200, pady=20)
                 existing_photo_path = os.path.join("data/photos", personne["photo_id"])
@@ -205,7 +208,8 @@ def emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, 
                     photo_label.config(text="Photo non trouvée")
             else:
                 # Option pour ajouter une photo si elle n'existe pas
-                form_window.geometry("650x800")
+                nouvelles_dimensions = resize_form_window(root, 650, 800)
+                form_window.geometry(nouvelles_dimensions)
 
                 # Créer un Frame pour regrouper les éléments
                 frame = ttk.Frame(form_window)
@@ -370,9 +374,11 @@ def rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fic
             widget.destroy()
 
         if personne['photo_id']:
-            form_window.geometry("650x800")
+            nouvelles_dimensions = resize_form_window(root, 650, 800)
+            form_window.geometry(nouvelles_dimensions)
         else:
-            form_window.geometry("650x650")
+            nouvelles_dimensions = resize_form_window(root, 650, 650)
+            form_window.geometry(nouvelles_dimensions)
 
         custom_title = tkfont.Font(family="Georgia", size=24, weight="bold")
         (ttk.Label(form_window, text=f"{prenom} {nom}", font=custom_title, background="#f0f0f0", foreground="darkblue")

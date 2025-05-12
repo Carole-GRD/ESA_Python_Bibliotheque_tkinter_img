@@ -6,12 +6,15 @@ from tkinter import ttk
 import tkinter.font as tkfont
 from utils.bibliotheque_gui import afficher_livres
 from utils.bibliotheque_gui import ajouter_livre
+from utils.bibliotheque_gui import modifier_livre
 from utils.bibliotheque_gui import rechercher_livre
 from utils.bibliotheque_gui import supprimer_livre
-from utils.emprunt_gui import emprunter_livre, rendre_livre
+from utils.emprunt_gui import emprunter_livre
+from utils.emprunt_gui import rendre_livre
+from utils.emprunt_gui import modifier_personne
 from utils.gestion_fichiers import lire_bibliotheque, lire_emprunts
 
-# Global variables
+# Variables globales
 fichier_bibliotheque = "data/bibliotheque.json"
 fichier_emprunt = "data/emprunt.csv"
 livres = lire_bibliotheque(fichier_bibliotheque)
@@ -24,7 +27,15 @@ def setup_main_window():
     """Configure et initialise la fenêtre principale de l'application avec les boutons et le texte de résultat."""
     global root, result_text
     root.title("Bibliothèque")
-    root.geometry("1165x670")
+
+    # Centrer la fenêtre principale au milieu de l'écran
+    window_width = 1500
+    window_height = 800
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width - window_width) // 2
+    y = (screen_height - window_height) // 2
+    root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
     # Définir une police personnalisée pour les widgets
     custom_font = tkfont.Font(family="Helvetica", size=14)
@@ -40,6 +51,7 @@ def setup_main_window():
 
     buttons = [
         ("Ajouter un livre", lambda: ajouter_livre(root, result_text, livres, fichier_bibliotheque)),
+        ("Modifier un livre", lambda: modifier_livre(root, result_text, livres, fichier_bibliotheque)),
         ("Supprimer un livre", lambda: supprimer_livre(root, result_text, livres, fichier_bibliotheque)),
         ("Chercher un livre", lambda: rechercher_livre(root, result_text, livres)),
         ("Afficher les livres", lambda: afficher_livres(result_text, livres)),
@@ -54,10 +66,10 @@ def setup_main_window():
         (ttk.Button(main_frame, text=text, command=command, style="Custom.TButton")
             .grid(row=0, column=i, padx=5, pady=5))
 
-    result_text = tk.Text(main_frame, height=20, width=100, font=custom_font, spacing1=3, spacing3=3)
+    result_text = tk.Text(main_frame, height=25, width=100, font=custom_font, spacing1=3, spacing3=3)
     result_text.grid(row=1, column=0, columnspan=30, pady=20)
 
 
-# Run the application
+# Démarrer l'application
 setup_main_window()
 root.mainloop()
