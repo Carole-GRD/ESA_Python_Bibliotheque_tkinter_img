@@ -59,6 +59,7 @@ def setup_main_window():
          lambda: emprunter_livre(root, result_text, livres, fichier_bibliotheque, personnes, fichier_emprunt)),
         ("Rendre un livre",
          lambda: rendre_livre(root, result_text, livres, fichier_bibliotheque, personnes, fichier_emprunt)),
+        ("Modifier personne", lambda: modifier_personne(root, result_text, personnes, fichier_emprunt)),
         ("Quitter", root.quit)
     ]
 
